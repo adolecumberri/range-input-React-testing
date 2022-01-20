@@ -10,18 +10,32 @@ import RangeInput from './components/RangeInput';
 
 
 function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        
-        <BrowserRouter>
-        <Navigation />
-          <Routes>
-            <Route path="/Exercice1" element={<RangeInput />} />
-            <Route path="/Exercice2" element={<RangeInput />} />
-          </ Routes>
 
-        </BrowserRouter>,
+  const containerStyle = {
+    padding: "16px"
+  }
+
+
+
+
+
+  return (
+    <div className="App" style={{ height: '100%' }}>
+      <header className="App-header">
+
+        <BrowserRouter>
+          <Navigation />
+          <div style={containerStyle}>
+            <Routes>
+              <Route path="/Exercice1" element={<RangeInput />} />
+              <Route path="/Exercice2" element={<RangeInput />} />
+            </ Routes>
+
+            
+
+          </div>
+
+        </BrowserRouter>
       </header>
     </div>
   );
