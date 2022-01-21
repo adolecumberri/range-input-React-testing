@@ -4,25 +4,31 @@ import React, { Dispatch, FC, ReactNode, SetStateAction, useEffect, useLayoutEff
 interface ISlider {
     height?: number;
     children?: ReactNode;
-    sliderStatus:  [number, Dispatch<SetStateAction<number>>] ;
+    sliderStatus: [number, Dispatch<SetStateAction<number>>];
+    sliderMarginStatus: [number, Dispatch<SetStateAction<number>>];
     handleDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
-    handleDrop: (e: React.DragEvent<HTMLDivElement>) => void
+    handleDrop: (e: React.DragEvent<HTMLDivElement>) => void,
+    minBulletStatus: [number, Dispatch<SetStateAction<number>>];
+    maxBulletStatus: [number, Dispatch<SetStateAction<number>>];
 }
 
 
 const Slider: FC<ISlider> = ({
     height = 40,
-    handleDragOver = () => {},
-    handleDrop = () => {},
+    handleDragOver = () => { },
+    handleDrop = () => { },
     sliderStatus: [sliderWidth, setSliderWidth],
+    sliderMarginStatus: [sliderMargin, setSliderMargin],
+    minBulletStatus: [minBulletX, setMinBulletX],
+    maxBulletStatus: [maxBulletX, setMaxBulletX],
     children,
 }) => {
 
     const sliderColor = "#484848";
     const sliderDiv = useRef<HTMLDivElement>(null)
-    
 
- 
+
+
 
 
     /**
@@ -31,6 +37,9 @@ const Slider: FC<ISlider> = ({
     useEffect(() => {
         function updateSize() {
             const slDiv = sliderDiv.current as HTMLDivElement;
+            const slDivParent = slDiv.parentElement as HTMLDivElement;
+
+            setSliderMargin((slDivParent.offsetWidth - slDiv.offsetWidth) / 2);
             setSliderWidth(slDiv.offsetWidth);
         }
 
@@ -42,21 +51,60 @@ const Slider: FC<ISlider> = ({
 
     return (
         <>
-        
-            <div
-                id="slider"
-                ref={sliderDiv}
-                style={{
-                    borderBottom: `${height}px solid ${sliderColor}`,
-                    width: "100%",
-                    position: "relative"
-                }}
+            <div style={{ display: "flex" }}>
+                <input style={
+                    { width: 40, height: 40, boxSizing: "border-box", textAlign: "center" }
+                }
+                    type="text"
+                    value={minBulletX}
+                    placeholder='Min'
+                    onChange={(e) => {
+                        setMinBulletX(e.target.value as unknown as number);
+                    }}
 
-                onDrop={e => handleDrop(e)}
-                onDragOver={e => handleDragOver(e)}
-            >
-                {children}
+                    onBlur={() => {
+                        if (minBulletX > maxBulletX) {
+                            setMinBulletX(maxBulletX);
+                        }
+                    }}
+
+
+                />
+
+                <div
+                    id="slider"
+                    ref={sliderDiv}
+                    style={{
+                        borderBottom: `${height}px solid ${sliderColor}`,
+                        width: "100%",
+                        position: "relative",
+                        margin: `0px ${height}px`,
+                    }}
+
+                    onDrop={e => handleDrop(e)}
+                    onDragOver={e => handleDragOver(e)}
+                >
+                    {children}
+                </div>
+                <input
+                    style={
+                        { width: 40, height: 40, boxSizing: "border-box", textAlign: "center" }
+                    }
+                    type="text"
+                    value={maxBulletX}
+                    placeholder='Max'
+                    onChange={(e) => {
+
+                        setMaxBulletX(e.target.value as unknown as number);
+                    }}
+                    onBlur={() => {
+                        if (maxBulletX < minBulletX) {
+                            setMaxBulletX(minBulletX);
+                        }
+                    }}
+                />
             </div>
+
         </>
 
     );
