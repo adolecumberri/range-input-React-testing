@@ -8,8 +8,12 @@ interface ISlider {
     sliderMarginStatus: [number, Dispatch<SetStateAction<number>>];
     handleDragOver: (e: React.DragEvent<HTMLDivElement>) => void;
     handleDrop: (e: React.DragEvent<HTMLDivElement>) => void,
-    minBulletStatus: [number, Dispatch<SetStateAction<number>>];
-    maxBulletStatus: [number, Dispatch<SetStateAction<number>>];
+    minBulletXStatus: [number, Dispatch<SetStateAction<number>>];
+    minBulletPriceStatus: [number, Dispatch<SetStateAction<number>>];
+    maxBulletXStatus: [number, Dispatch<SetStateAction<number>>];
+    maxBulletPriceStatus: [number, Dispatch<SetStateAction<number>>];
+    priceBulletHandler: (newValue: number) => void;
+    setSelectedBullet:  Dispatch<SetStateAction<"min" | "max">>
 }
 
 
@@ -19,16 +23,17 @@ const Slider: FC<ISlider> = ({
     handleDrop = () => { },
     sliderStatus: [sliderWidth, setSliderWidth],
     sliderMarginStatus: [sliderMargin, setSliderMargin],
-    minBulletStatus: [minBulletX, setMinBulletX],
-    maxBulletStatus: [maxBulletX, setMaxBulletX],
+    minBulletXStatus: [minBulletX, setMinBulletX],
+    minBulletPriceStatus: [minBulletPrice, setMinBulletPrice],
+    maxBulletXStatus: [maxBulletX, setMaxBulletX],
+    maxBulletPriceStatus: [maxBulletPrice, setMaxBulletPrice],
     children,
+    priceBulletHandler,
+    setSelectedBullet,
 }) => {
 
     const sliderColor = "#484848";
     const sliderDiv = useRef<HTMLDivElement>(null)
-
-
-
 
 
     /**
@@ -56,18 +61,15 @@ const Slider: FC<ISlider> = ({
                     { width: 40, height: 40, boxSizing: "border-box", textAlign: "center" }
                 }
                     type="text"
-                    value={minBulletX}
+                    value={minBulletPrice}
                     placeholder='Min'
+                    onFocus={() => setSelectedBullet("min")}
                     onChange={(e) => {
-                        setMinBulletX(e.target.value as unknown as number);
+                        setMinBulletPrice(e.target.value as unknown as number);
                     }}
-
-                    onBlur={() => {
-                        if (minBulletX > maxBulletX) {
-                            setMinBulletX(maxBulletX);
-                        }
+                    onBlur={(e) => {
+                        priceBulletHandler(e.target.value as unknown as number);
                     }}
-
 
                 />
 
@@ -91,16 +93,14 @@ const Slider: FC<ISlider> = ({
                         { width: 40, height: 40, boxSizing: "border-box", textAlign: "center" }
                     }
                     type="text"
-                    value={maxBulletX}
+                    value={maxBulletPrice}
                     placeholder='Max'
+                    onFocus={() => setSelectedBullet("max")}
                     onChange={(e) => {
-
-                        setMaxBulletX(e.target.value as unknown as number);
+                        setMaxBulletPrice(e.target.value as unknown as number);
                     }}
-                    onBlur={() => {
-                        if (maxBulletX < minBulletX) {
-                            setMaxBulletX(minBulletX);
-                        }
+                    onBlur={(e) => {
+                        priceBulletHandler(e.target.value as unknown as number);
                     }}
                 />
             </div>
