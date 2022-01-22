@@ -27,11 +27,15 @@ function App() {
           <Navigation />
           <div style={containerStyle}>
             <Routes>
-              <Route path="/Exercice1" element={<RangeInput />} />
-              <Route path="/Exercice2" element={<RangeInput />} />
+              <Route path="/Exercice1" element={<><RangeInput value={{ max: 30, min: 20 }} step={0.01} />
+                <RangeInput value={{ max: 30, min: 20 }} step={0.1} />
+                <RangeInput value={{ max: 30, min: 20 }} step={1} />
+
+              </>} />
+              <Route path="/Exercice2" element={<RangeInput value={[10, 12, 14, 16, 18]} />} />
             </ Routes>
 
-            
+
 
           </div>
 

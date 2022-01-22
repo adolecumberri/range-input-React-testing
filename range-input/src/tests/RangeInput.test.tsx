@@ -6,7 +6,7 @@ import RangeInput from '../components/RangeInput';
 
 
 describe('Navigation Renders', () => {
-    const view = render(<RangeInput />);
+    const view = render(<RangeInput  value={{max: 30, min: 20}} />);
 
   
   
