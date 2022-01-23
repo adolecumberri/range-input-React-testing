@@ -1,4 +1,4 @@
-import React, {FC, useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 
 import {
   BrowserRouter,
@@ -11,33 +11,31 @@ import { myFetch } from './utils';
 
 
 function App() {
-const [range, setRange] = useState({
-  min: 0, max: 1
-});
-const [valueRange, setValueRange] = useState<number[]>([]);
-  const containerStyle = {
-    padding: "16px"
-  }
+  const [range, setRange] = useState({
+    min: 0, max: 1
+  });
+  const [valueRange, setValueRange] = useState<number[]>([0, 1]);
 
 
-useEffect( () => {
-  myFetch({
+  /**
+   * Calls the backend.
+   */
+  useEffect(() => {
+    myFetch({
       path: "/range",
       method: "GET"
     }).then((value: any) => {
-      console.log({value});
       setRange(value);
     });
-
 
     myFetch({
       path: `/values/${Math.floor(Math.random() * 150 + 5)}`,
       method: "GET"
-    }).then((value: any) => {
-      console.log({value});
-      setValueRange(value);
+    }).then(({ values }: any) => {
+      console.log({ a: values });
+      setValueRange(values);
     });
-}, []);
+  }, []);
 
   return (
     <div className="App" style={{ height: '100%' }}>
@@ -45,18 +43,15 @@ useEffect( () => {
 
         <BrowserRouter>
           <Navigation />
-          <div style={containerStyle}>
+          <div style={{ padding: "16px" }}>
             <Routes>
               <Route path="/Exercice1" element={<><RangeInput value={range} step={0.01} />
                 <RangeInput value={range} step={0.1} />
                 <RangeInput value={range} step={1} />
 
               </>} />
-              <Route path="/Exercice2" element={<RangeInput value={valueRange} labelsEnabled={false} />} />
+              <Route path="/Exercice2" element={<RangeInput value={valueRange} range={range} labelsEnabled={false} />} />
             </ Routes>
-
-
-
           </div>
 
         </BrowserRouter>

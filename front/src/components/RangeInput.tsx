@@ -1,4 +1,5 @@
-import React, { FC, useCallback, useEffect, useReducer, useState } from 'react';
+/* eslint-disable react-hooks/exhaustive-deps */
+import React, { FC, useCallback, useEffect, useState } from 'react';
 import M from '../constants/messages';
 import { RangeValue } from '../interfaces/RangeInput';
 import Bullet from './rangeInput/Bullet';
@@ -9,17 +10,16 @@ import "./rangeInput.css"
 
 interface IRangeInput {
   width?: number | string;
-  height?: number | string;
   value: RangeValue;
   step?: 0.01 | 0.1 | 1 | 0;
   labelsEnabled?: boolean;
+  range?: {min: number, max: number}
 }
 
-const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0, labelsEnabled = true }) => {
+const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0, labelsEnabled = true, range= null }) => {
 
   const height = 40;
 
-  //Explicar por qué no uso UseReducer. (el estado sliderWidth....)
   const [minBulletX, setMinBulletX] = useState(0);
   const [minBulletPrice, setMinBulletPrice] = useState(0);
   const [maxBulletX, setMaxBulletX] = useState(0);
@@ -41,6 +41,9 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0, labelsEna
   const [stepMultiplier, setStepMultiplier] = useState(1);
 
 
+  /**
+   * Created step Multiplier using a Dictionary as reference.
+   */
   useEffect(() => {
     const DICTIONARY = {
       "0.01": 100,
@@ -50,17 +53,24 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0, labelsEna
     }
 
     //defino el multiplicador con el que calcularé los steps.
-    if (!Array.isArray(value) && step) {
-      setStepMultiplier(DICTIONARY[step]);
-    }
+    if (!Array.isArray(value) && step) setStepMultiplier(DICTIONARY[step]);
 
   }, [step]);
 
-  //Defino el estado de los valores, independientemente de que tipo de input quiere, si libre o si concreto.
+  /**
+   * Assign Bullets prices and sliderValues.
+   * @param {func} effect - callback.
+   * @param {value} deps - when value changes, it re-renders.
+   */
   useEffect(() => {
     if (Array.isArray(value)) {
-
+      if (!value.length) throw new Error(M.array_length_error);
+      //array sorted.
       let newValue = value.sort((a, b) => a - b);
+      //array in bounds
+      if(range) newValue = newValue.filter( n => (n >= range.min || n <= range.max));
+
+      //added slider values. and prices in bullets
       setSliderValue({
         max: newValue[value.length - 1],
         min: newValue[0],
@@ -69,7 +79,7 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0, labelsEna
       setMaxBulletPrice(newValue[value.length - 1]);
       setMinBulletPrice(newValue[0]);
     } else {
-      // Aqui es {max,min} 100%
+      // checking errors.
       if (value.min >= value.max) throw new Error(M.max_min_error);
       setSliderValue({
         ...value,
@@ -80,29 +90,36 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0, labelsEna
     }
   }, [value]);
 
+
+
   //EachTime sliderWidth changes, re-adjust maxBulletX
+  /**
+   * Readjust positions when slider width changes.
+   * @param {func} effect - callback.
+   * @param {value} deps - Just when slider Width changes, it re-renders.
+   */
   useEffect(() => {
-    setMaxBulletX(sliderWidth);
 
     //minBulletPrice
     //newValue in bounds 
     let newMinPricePercentage = minBulletPrice <= sliderValue.min ? sliderValue.min :
-    minBulletPrice >= sliderValue.max ? sliderValue.max :
-    minBulletPrice >= maxBulletPrice ? maxBulletPrice - step :
-    minBulletPrice;
+      minBulletPrice >= sliderValue.max ? sliderValue.max :
+        minBulletPrice >= maxBulletPrice ? maxBulletPrice - step :
+          minBulletPrice;
 
     //calc position using the % where current price is. (if price is the 20% of the value, position will be 20% too.)
     let minPricePercentage = (newMinPricePercentage - sliderValue.min) / (sliderValue.max - sliderValue.min);
     let minBulletPosition = minPricePercentage * sliderWidth;
+    debugger;
     setMinBulletX(minBulletPosition)
 
 
     //newValue in bounds 
     let newMaxBulletPrice = maxBulletPrice <= sliderValue.min ? sliderValue.min :
-    maxBulletPrice >= sliderValue.max ? sliderValue.max :   
-    maxBulletPrice <= minBulletPrice ? minBulletPrice + step :
-    maxBulletPrice;
-    
+      maxBulletPrice >= sliderValue.max ? sliderValue.max :
+        maxBulletPrice <= minBulletPrice ? minBulletPrice + step :
+          maxBulletPrice;
+
     //calc position using the % where current price is. (if price is the 20% of the value, position will be 20% too.)
     let maxPricePercentage = (newMaxBulletPrice - sliderValue.min) / (sliderValue.max - sliderValue.min);
     let maBulletPosition = maxPricePercentage * sliderWidth;
@@ -111,53 +128,56 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0, labelsEna
   }, [sliderWidth]);
 
   /**
- * 
- * @param {any} action - argument.
- */
-  const pxBulletHandler: (newValue: number, bullet?: "min" | "max" ) => void = useCallback((newValue , bullet = selectedBullet) => {
-
-    //height is the bullet width.
+   * Handle bullet price and position by his pixel position.
+   * @param {number} newValue - Pixel position.
+   * @param {"min" | "max"} bullet - It's the selected bullet. you can override the default value.
+   * @param {value} deps - the dependencies are just set knowing where shoult it be reconstructed.
+   */
+  const pxBulletHandler: (newValue: number, bullet?: "min" | "max") => void = useCallback((newValue, bullet = selectedBullet) => {
+    //position minus the half of the bullet width. (visual correction)
     let newValueCorrected = newValue - (height / 2);
 
     //solution is the pixel where the bullet is.
-    //solution (px) in bounds. 0 - sliderWidth
+    //solution (px) in bounds. [0 - sliderWidth]
     let solution = newValueCorrected - sliderMargin < 0 ? 0 :
       newValueCorrected - sliderMargin > sliderWidth ? sliderWidth :
         newValueCorrected - sliderMargin;
 
 
-    //Calculando el precio final.
+    //calculating final Price corrected by the steps.
     let pxPercentage = solution / sliderWidth;  // Xpx - Apx / Bpx - Apx  --> A y B son extremos, X es el punto.
     let finalPrice = pxPercentage * (sliderValue.max - sliderValue.min) + sliderValue.min;
-    //finalPrice Rounded
-
-
     finalPrice = Math.round(finalPrice * stepMultiplier) / stepMultiplier;
 
 
-    //min y lower that the maxBullet ?
     if (bullet === "min") {
+      //check if it's not exactly in the same position than the max value bullet.
       if (solution < maxBulletX - height + 2) { //height - 2  hace referencia al otro bullet + margin 
 
-        //If the price is the same, I take off the step value. being the minimal distance possible.
+        //If the price is the same, I take off the step value. being the "minimal" distance possible.
         let finalPriceCorrection = finalPrice === maxBulletPrice ? finalPrice - (step as number) : finalPrice;
-        // if it's an array I will find the closest value.
-        setMinBulletPrice( Array.isArray(value) ? searchClosest(finalPriceCorrection) as number : finalPriceCorrection);
+        // if it's an array I will find the closest value. otherwhise it's okey.
+        setMinBulletPrice(Array.isArray(value) ? searchClosest(finalPriceCorrection) as number : finalPriceCorrection);
         //solution loaded with the margin correction.
         setMinBulletX(solution);
       }
 
     } else if (solution > (minBulletX + height - 2)) { //height - 2  hace referencia al otro bullet + margin
       let finalPriceCorrection = finalPrice === minBulletPrice ? finalPrice + (step as number) : finalPrice;
-
-      setMaxBulletPrice( Array.isArray(value) ? searchClosest(finalPriceCorrection) as number : finalPriceCorrection);
+      setMaxBulletPrice(Array.isArray(value) ? searchClosest(finalPriceCorrection) as number : finalPriceCorrection);
       setMaxBulletX(solution);
     }
   }, [sliderWidth, sliderMargin, maxBulletX, minBulletX, selectedBullet]);
 
 
-  const priceBulletHandler: (newValue: number, bullet?: "min" | "max" ) => void = useCallback((newValue, bullet = selectedBullet) => {
 
+ /**
+   * Handle bullet price and position by his pixel position.
+   * @param {number} newValue - Pixel position.
+   * @param {"min" | "max"} bullet - It's the selected bullet. you can override the default value.
+   * @param {value} deps - the dependencies are just set knowing where shoult it be reconstructed.
+   */
+  const priceBulletHandler: (newValue: number, bullet?: "min" | "max") => void = useCallback((newValue, bullet = selectedBullet) => {
     //newValue in bounds 
     // Lower than the min value?
     // Higher than the max value?
@@ -170,13 +190,13 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0, labelsEna
           (bullet === "max" && newValue <= minBulletPrice) ? minBulletPrice + step :
             newValue;
 
-  //set solution decimals on the step bounds too.
-  solution = Math.round(solution * stepMultiplier) / stepMultiplier;
+    //set solution decimals on the step bounds too.
+    solution = Math.round(solution * stepMultiplier) / stepMultiplier;
 
 
-  //Calculando el precio final.
-  let pricePercentage = (solution - sliderValue.min) / (sliderValue.max - sliderValue.min);
-  let finalPixelPosition = pricePercentage * sliderWidth;
+    //Calculando el precio final.
+    let pricePercentage = (solution - sliderValue.min) / (sliderValue.max - sliderValue.min);
+    let finalPixelPosition = pricePercentage * sliderWidth;
 
     //min or max bullet?
     if (bullet === "min") {
@@ -188,7 +208,6 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0, labelsEna
       setMaxBulletX(finalPixelPosition);
     }
 
-
   }, [selectedBullet, maxBulletPrice, minBulletPrice, sliderValue.min, sliderValue.max]);
 
 
@@ -198,21 +217,12 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0, labelsEna
     pxBulletHandler(e.pageX);
   };
 
-  const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
-    console.log("Drop");
-    e.preventDefault();
-    e.stopPropagation();
-  };
-
   const searchClosest = (number: number) => {
-    if(!Array.isArray(value)){
-      return false;
-    }
+    if (!Array.isArray(value)) return false;
 
+    return value.reduce((prev, curr) => (Math.abs(curr - number) < Math.abs(prev - number) ? curr : prev));
 
-    return value.reduce( (prev, curr) => (Math.abs(curr - number) < Math.abs(prev - number) ? curr : prev)  );
-
-}
+  }
 
   return (
     <div style={{ width, margin: height / 4 }}>
@@ -222,39 +232,31 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0, labelsEna
         X max: {maxBulletX}  -  Price Max {maxBulletPrice}
       </span>
       <Slider
+        handleDragOver={handleDragOver}
         height={height}
+        labelsEnabled={labelsEnabled}
+        minBulletPriceStatus={[minBulletPrice, setMinBulletPrice]}
+        minBulletXStatus={[minBulletX, setMinBulletX]}
+        maxBulletPriceStatus={[maxBulletPrice, setMaxBulletPrice]}
+        maxBulletXStatus={[maxBulletX, setMaxBulletX]}
+        priceBulletHandler={priceBulletHandler}
+        setSelectedBullet={setSelectedBullet}
         sliderStatus={[sliderWidth, setSliderWidth]}
         sliderMarginStatus={[sliderMargin, setSliderMargin]}
-        minBulletXStatus={[minBulletX, setMinBulletX]}
-        maxBulletXStatus={[maxBulletX, setMaxBulletX]}
-
-        minBulletPriceStatus={[minBulletPrice, setMinBulletPrice]}
-        maxBulletPriceStatus={[maxBulletPrice, setMaxBulletPrice]}
-
-        handleDragOver={handleDragOver}
-        handleDrop={handleDrop}
-        priceBulletHandler={priceBulletHandler}
-
-        setSelectedBullet={setSelectedBullet}
-
-        labelsEnabled ={labelsEnabled}
-
       >
         <Bullet
-          setSelectedBullet={setSelectedBullet}
-          type={"min"}
-          size={height}
           position={minBulletX}
+          setSelectedBullet={setSelectedBullet}
+          size={height}
           sliderMargin={sliderMargin}
-          defaultValue={sliderValue.min} //!unused
+          type={"min"}
         />
         <Bullet
-          setSelectedBullet={setSelectedBullet}
-          type={"max"}
-          size={height}
           position={maxBulletX}
+          setSelectedBullet={setSelectedBullet}
+          size={height}
           sliderMargin={sliderMargin}
-          defaultValue={sliderValue.max} //!unused
+          type={"max"}
         />
 
       </Slider>

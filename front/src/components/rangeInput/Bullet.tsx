@@ -1,6 +1,4 @@
-import React, { CSSProperties, FC, useState } from 'react';
-
-
+import React, { CSSProperties, FC } from 'react';
 
 interface IBullet {
     size: number;
@@ -12,17 +10,11 @@ interface IBullet {
 const Bullet: FC<IBullet> = ({ size, position, sliderMargin, setSelectedBullet, type }) => {
 
     const handleDragEnter = (e: any) => {
-        console.log("enter");
         e.preventDefault();
         e.stopPropagation();
         setSelectedBullet(type);
 
     };
-
-    const handleDragLeave = (e:any) => {
-        e.preventDefault();
-        e.stopPropagation();
-    }
 
     const bulletStyle: CSSProperties = {
         border: "1px solid black",
@@ -31,32 +23,31 @@ const Bullet: FC<IBullet> = ({ size, position, sliderMargin, setSelectedBullet, 
     }
 
     return (<>
-        <div 
-        className="range-bullet range-bullet-hidden"
-        style={{
-            ...bulletStyle,
-            width: size,
-            height: size,
-            marginLeft: position - (size / 2),
-            opacity: 0,
-            zIndex: 3,
-        }}
+        <div
+            className="range-bullet range-bullet-hidden"
+            style={{
+                ...bulletStyle,
+                width: size,
+                height: size,
+                marginLeft: position - (size / 2),
+                opacity: 0,
+                zIndex: 3,
+            }}
             draggable
             onDragEnter={e => handleDragEnter(e)}
-            onDragLeave={e => handleDragLeave(e)}
         >
         </div>
 
-        <div 
-        className="range-bullet range-bullet-visible"
-        style={{
-            ...bulletStyle,
-            width: size,
-            height: size,
-            marginLeft: position - (size / 2),
-            backgroundColor: "white",
-            zIndex: 2
-        }}
+        <div
+            className="range-bullet range-bullet-visible"
+            style={{
+                ...bulletStyle,
+                width: size,
+                height: size,
+                marginLeft: position - (size / 2),
+                backgroundColor: "white",
+                zIndex: 2
+            }}
             draggable
         >
         </div>
