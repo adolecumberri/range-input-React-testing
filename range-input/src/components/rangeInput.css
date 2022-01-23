@@ -1,0 +1,13 @@
+
+
+.range-bullet{
+    cursor: move;
+    cursor: grab;
+    cursor: -moz-grab;
+    cursor: -webkit-grab;
+}
+
+
+.range-bullet-hidden:hover + .range-bullet-visible{
+   transform: scale(1.1);
+}

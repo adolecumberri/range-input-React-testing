@@ -4,7 +4,7 @@ import { RangeValue } from '../interfaces/RangeInput';
 import Bullet from './rangeInput/Bullet';
 import Slider from './rangeInput/Slider';
 
-
+import "./rangeInput.css"
 
 
 interface IRangeInput {
@@ -22,7 +22,7 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0 }) => {
   const [minBulletX, setMinBulletX] = useState(0);
   const [minBulletPrice, setMinBulletPrice] = useState(0);
   const [maxBulletX, setMaxBulletX] = useState(0);
-  const [maxBulletPrice, setMaxBulletPrice] = useState(0);
+  const [maxBulletPrice, setMaxBulletPrice] = useState(1);
   const [selectedBullet, setSelectedBullet] = useState<"min" | "max">("min");
 
   //correction value parentSliderDiv.width - sliderDiv.
@@ -79,10 +79,34 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0 }) => {
     }
   }, [value]);
 
-  //!TODO: ver como corrijo esto
   //EachTime sliderWidth changes, re-adjust maxBulletX
   useEffect(() => {
     setMaxBulletX(sliderWidth);
+
+    //minBulletPrice
+    //newValue in bounds 
+    let newMinPricePercentage = minBulletPrice <= sliderValue.min ? sliderValue.min :
+    minBulletPrice >= sliderValue.max ? sliderValue.max :
+    minBulletPrice >= maxBulletPrice ? maxBulletPrice - step :
+    minBulletPrice;
+
+    //calc position using the % where current price is. (if price is the 20% of the value, position will be 20% too.)
+    let minPricePercentage = (newMinPricePercentage - sliderValue.min) / (sliderValue.max - sliderValue.min);
+    let minBulletPosition = minPricePercentage * sliderWidth;
+    setMinBulletX(minBulletPosition)
+
+
+    //newValue in bounds 
+    let newMaxBulletPrice = maxBulletPrice <= sliderValue.min ? sliderValue.min :
+    maxBulletPrice >= sliderValue.max ? sliderValue.max :   
+    maxBulletPrice <= minBulletPrice ? minBulletPrice + step :
+    maxBulletPrice;
+    
+    //calc position using the % where current price is. (if price is the 20% of the value, position will be 20% too.)
+    let maxPricePercentage = (newMaxBulletPrice - sliderValue.min) / (sliderValue.max - sliderValue.min);
+    let maBulletPosition = maxPricePercentage * sliderWidth;
+    setMaxBulletX(maBulletPosition);
+
   }, [sliderWidth]);
 
   /**
@@ -129,7 +153,7 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0 }) => {
   }, [sliderWidth, sliderMargin, maxBulletX, minBulletX, selectedBullet]);
 
 
-  const priceBulletHandler: (newValue: number) => void = useCallback((newValue) => {
+  const priceBulletHandler: (newValue: number, bullet?: "min" | "max" ) => void = useCallback((newValue, bullet = selectedBullet) => {
 
     //newValue in bounds 
     // Lower than the min value?
@@ -139,11 +163,11 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0 }) => {
     // otherwise default value.
     let solution = newValue <= sliderValue.min ? sliderValue.min :
       newValue >= sliderValue.max ? sliderValue.max :
-        (selectedBullet === "min" && newValue >= maxBulletPrice) ? maxBulletPrice - step :
-          (selectedBullet === "max" && newValue <= minBulletPrice) ? minBulletPrice + step :
+        (bullet === "min" && newValue >= maxBulletPrice) ? maxBulletPrice - step :
+          (bullet === "max" && newValue <= minBulletPrice) ? minBulletPrice + step :
             newValue;
 
-            //set solution decimals on the step bounds too.
+    //set solution decimals on the step bounds too.
     solution = Math.round(solution * stepMultiplier) / stepMultiplier;
 
 
@@ -152,9 +176,9 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0 }) => {
     let finalPixelPosition = pricePercentage * sliderWidth;
 
     debugger;
-    
-   //min or max bullet?
-    if (selectedBullet === "min") {
+
+    //min or max bullet?
+    if (bullet === "min") {
       setMinBulletPrice(solution);
       //solution loaded with the margin correction.
       setMinBulletX(finalPixelPosition);
@@ -164,7 +188,7 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0 }) => {
     }
 
 
-  }, [selectedBullet]);
+  }, [selectedBullet, maxBulletPrice, minBulletPrice, sliderValue.min, sliderValue.max]);
 
 
   const handleDragOver = (e: React.DragEvent<HTMLDivElement>) => {
@@ -172,6 +196,7 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0 }) => {
     e.stopPropagation();
     pxBulletHandler(e.pageX);
   };
+
   const handleDrop = (e: React.DragEvent<HTMLDivElement>) => {
     console.log("Drop");
     e.preventDefault();

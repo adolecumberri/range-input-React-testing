@@ -12,8 +12,8 @@ interface ISlider {
     minBulletPriceStatus: [number, Dispatch<SetStateAction<number>>];
     maxBulletXStatus: [number, Dispatch<SetStateAction<number>>];
     maxBulletPriceStatus: [number, Dispatch<SetStateAction<number>>];
-    priceBulletHandler: (newValue: number) => void;
-    setSelectedBullet:  Dispatch<SetStateAction<"min" | "max">>
+    priceBulletHandler: (newValue: number, bullet?: "min" | "max") => void;
+    setSelectedBullet: Dispatch<SetStateAction<"min" | "max">>
 }
 
 
@@ -64,8 +64,9 @@ const Slider: FC<ISlider> = ({
                     value={minBulletPrice}
                     placeholder='Min'
                     onFocus={() => setSelectedBullet("min")}
-                    onChange={(e) => {
-                        setMinBulletPrice(e.target.value as unknown as number);
+                    onChange={({ target: { value } }) => {
+                        if (!isNaN(value as unknown as number))
+                            setMinBulletPrice(value as unknown as number);
                     }}
                     onBlur={(e) => {
                         priceBulletHandler(e.target.value as unknown as number);
@@ -96,8 +97,9 @@ const Slider: FC<ISlider> = ({
                     value={maxBulletPrice}
                     placeholder='Max'
                     onFocus={() => setSelectedBullet("max")}
-                    onChange={(e) => {
-                        setMaxBulletPrice(e.target.value as unknown as number);
+                    onChange={({ target: { value } }) => {
+                        if (!isNaN(value as unknown as number))
+                            setMaxBulletPrice(value as unknown as number);
                     }}
                     onBlur={(e) => {
                         priceBulletHandler(e.target.value as unknown as number);
