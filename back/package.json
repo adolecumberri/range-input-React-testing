@@ -1,0 +1,24 @@
+{
+  "name": "range_distributor",
+  "version": "1.0.0",
+  "description": "little local data provider",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon index.ts"
+  },
+  "author": "Adolfo Reyes Agustin",
+  "license": "ISC",
+  "dependencies": {
+    "@types/express": "^4.17.3",
+    "@types/morgan": "^1.9.0",
+    "@types/mysql": "^2.15.9",
+    "express": "^4.17.2",
+    "morgan": "^1.9.1",
+    "mysql": "^2.18.1",
+    "ts-node": "^10.4.0",
+    "typescript": "^3.8.3"
+  },
+  "devDependencies": {
+    "nodemon": "^1.19.4"
+  }
+}
