@@ -12,9 +12,10 @@ interface IRangeInput {
   height?: number | string;
   value: RangeValue;
   step?: 0.01 | 0.1 | 1 | 0;
+  labelsEnabled?: boolean;
 }
 
-const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0 }) => {
+const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0, labelsEnabled = true }) => {
 
   const height = 40;
 
@@ -45,7 +46,7 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0 }) => {
       "0.01": 100,
       "0.1": 10,
       "1": 1,
-      "0": 1,
+      "0": 100,
     }
 
     //defino el multiplicador con el que calcularé los steps.
@@ -113,7 +114,7 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0 }) => {
  * 
  * @param {any} action - argument.
  */
-  const pxBulletHandler: (newValue: number) => void = useCallback((newValue) => {
+  const pxBulletHandler: (newValue: number, bullet?: "min" | "max" ) => void = useCallback((newValue , bullet = selectedBullet) => {
 
     //height is the bullet width.
     let newValueCorrected = newValue - (height / 2);
@@ -133,21 +134,23 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0 }) => {
 
     finalPrice = Math.round(finalPrice * stepMultiplier) / stepMultiplier;
 
+
     //min y lower that the maxBullet ?
-    if (selectedBullet === "min") {
+    if (bullet === "min") {
       if (solution < maxBulletX - height + 2) { //height - 2  hace referencia al otro bullet + margin 
 
         //If the price is the same, I take off the step value. being the minimal distance possible.
         let finalPriceCorrection = finalPrice === maxBulletPrice ? finalPrice - (step as number) : finalPrice;
-
-        setMinBulletPrice(finalPriceCorrection);
+        // if it's an array I will find the closest value.
+        setMinBulletPrice( Array.isArray(value) ? searchClosest(finalPriceCorrection) as number : finalPriceCorrection);
         //solution loaded with the margin correction.
         setMinBulletX(solution);
       }
 
     } else if (solution > (minBulletX + height - 2)) { //height - 2  hace referencia al otro bullet + margin
       let finalPriceCorrection = finalPrice === minBulletPrice ? finalPrice + (step as number) : finalPrice;
-      setMaxBulletPrice(finalPriceCorrection);
+
+      setMaxBulletPrice( Array.isArray(value) ? searchClosest(finalPriceCorrection) as number : finalPriceCorrection);
       setMaxBulletX(solution);
     }
   }, [sliderWidth, sliderMargin, maxBulletX, minBulletX, selectedBullet]);
@@ -167,23 +170,21 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0 }) => {
           (bullet === "max" && newValue <= minBulletPrice) ? minBulletPrice + step :
             newValue;
 
-    //set solution decimals on the step bounds too.
-    solution = Math.round(solution * stepMultiplier) / stepMultiplier;
+  //set solution decimals on the step bounds too.
+  solution = Math.round(solution * stepMultiplier) / stepMultiplier;
 
 
-    //Calculando el precio final.
-    let pricePercentage = (solution - sliderValue.min) / (sliderValue.max - sliderValue.min);
-    let finalPixelPosition = pricePercentage * sliderWidth;
-
-    debugger;
+  //Calculando el precio final.
+  let pricePercentage = (solution - sliderValue.min) / (sliderValue.max - sliderValue.min);
+  let finalPixelPosition = pricePercentage * sliderWidth;
 
     //min or max bullet?
     if (bullet === "min") {
-      setMinBulletPrice(solution);
+      setMinBulletPrice(Array.isArray(value) ? searchClosest(solution) as number : solution);
       //solution loaded with the margin correction.
       setMinBulletX(finalPixelPosition);
     } else {
-      setMaxBulletPrice(solution);
+      setMaxBulletPrice(Array.isArray(value) ? searchClosest(solution) as number : solution);
       setMaxBulletX(finalPixelPosition);
     }
 
@@ -203,6 +204,15 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0 }) => {
     e.stopPropagation();
   };
 
+  const searchClosest = (number: number) => {
+    if(!Array.isArray(value)){
+      return false;
+    }
+
+
+    return value.reduce( (prev, curr) => (Math.abs(curr - number) < Math.abs(prev - number) ? curr : prev)  );
+
+}
 
   return (
     <div style={{ width, margin: height / 4 }}>
@@ -226,6 +236,9 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0 }) => {
         priceBulletHandler={priceBulletHandler}
 
         setSelectedBullet={setSelectedBullet}
+
+        labelsEnabled ={labelsEnabled}
+
       >
         <Bullet
           setSelectedBullet={setSelectedBullet}

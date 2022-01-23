@@ -14,6 +14,7 @@ interface ISlider {
     maxBulletPriceStatus: [number, Dispatch<SetStateAction<number>>];
     priceBulletHandler: (newValue: number, bullet?: "min" | "max") => void;
     setSelectedBullet: Dispatch<SetStateAction<"min" | "max">>
+    labelsEnabled: boolean;
 }
 
 
@@ -30,6 +31,7 @@ const Slider: FC<ISlider> = ({
     children,
     priceBulletHandler,
     setSelectedBullet,
+    labelsEnabled
 }) => {
 
     const sliderColor = "#484848";
@@ -65,13 +67,13 @@ const Slider: FC<ISlider> = ({
                     placeholder='Min'
                     onFocus={() => setSelectedBullet("min")}
                     onChange={({ target: { value } }) => {
-                        if (!isNaN(value as unknown as number))
+                        if (!isNaN(value as unknown as number) && labelsEnabled)
                             setMinBulletPrice(value as unknown as number);
                     }}
                     onBlur={(e) => {
                         priceBulletHandler(e.target.value as unknown as number);
                     }}
-
+                    disabled={!labelsEnabled}
                 />
 
                 <div
@@ -98,12 +100,14 @@ const Slider: FC<ISlider> = ({
                     placeholder='Max'
                     onFocus={() => setSelectedBullet("max")}
                     onChange={({ target: { value } }) => {
-                        if (!isNaN(value as unknown as number))
+                        if (!isNaN(value as unknown as number) && labelsEnabled)
                             setMaxBulletPrice(value as unknown as number);
                     }}
                     onBlur={(e) => {
                         priceBulletHandler(e.target.value as unknown as number);
                     }}
+                    disabled={!labelsEnabled}
+
                 />
             </div>
 

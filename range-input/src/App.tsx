@@ -16,9 +16,6 @@ function App() {
   }
 
 
-
-
-
   return (
     <div className="App" style={{ height: '100%' }}>
       <header className="App-header">
@@ -32,7 +29,7 @@ function App() {
                 <RangeInput value={{ max: 30, min: 20 }} step={1} />
 
               </>} />
-              <Route path="/Exercice2" element={<RangeInput value={[10, 12, 14, 16, 18]} />} />
+              <Route path="/Exercice2" element={<RangeInput value={[10.99, 12, 14.369, 16.52, 180]} labelsEnabled={false} />} />
             </ Routes>
 
 
