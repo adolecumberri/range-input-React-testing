@@ -1,7 +1,7 @@
 import express, { Application } from "express";
 import cluster from "cluster";
 import morgan from "morgan";
-
+import  cors  from "cors";
 // Routes
 import IndexRoutes from "./routes/index.routes";
 
@@ -28,6 +28,7 @@ export class App {
     this.app?.use(express.json());
     this.app?.use(express.urlencoded());
     this.app?.use(express.json());
+    this.app?.use(cors());
   }
 
   private routes() {
@@ -47,3 +48,5 @@ export class App {
     );
   }
 }
+
+

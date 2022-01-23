@@ -2,11 +2,13 @@ import { Request, Response } from 'express'
 
 
 export function getRange(req: Request, res: Response): Response {
+   
    let solution = {
       min: Math.floor(Math.random() * 100 + 1),
       max: Math.floor(Math.random() * 100 + 100)
    }
-   return res.json(solution);
+
+   return res.send(solution);
 }
 
 
@@ -34,7 +36,7 @@ export function getValues({ params: { length } }: Request, res: Response): Respo
    }
 
 
-   return res.json({
+   return res.send({
       values: solution
    });
 }
