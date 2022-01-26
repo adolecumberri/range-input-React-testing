@@ -1,0 +1,152 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Navigation Renders Las ternarias dentro del useEffect se comprueban Todas. 1`] = `
+<div
+  data-testid="cents"
+  style={
+    Object {
+      "margin": 10,
+      "width": "80%",
+    }
+  }
+>
+  <span>
+    width: 
+    0
+    <br />
+    X min: 
+    0
+      -  Price Min 
+    0
+        
+    <br />
+    X max: 
+    0
+      -  Price Max 
+    1
+  </span>
+  <div
+    style={
+      Object {
+        "display": "flex",
+      }
+    }
+  >
+    <input
+      disabled={false}
+      onBlur={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      placeholder="Min"
+      style={
+        Object {
+          "boxSizing": "border-box",
+          "height": 40,
+          "textAlign": "center",
+          "width": 40,
+        }
+      }
+      type="text"
+      value={0}
+    />
+    <div
+      id="slider"
+      onDragOver={[Function]}
+      style={
+        Object {
+          "borderBottom": "40px solid #484848",
+          "margin": "0px 40px",
+          "position": "relative",
+          "width": "100%",
+        }
+      }
+    >
+      <div
+        className="range-bullet range-bullet-hidden"
+        data-testid="bullet-min"
+        draggable={true}
+        onDragEnter={[Function]}
+        style={
+          Object {
+            "border": "1px solid black",
+            "boxSizing": "border-box",
+            "height": 40,
+            "marginLeft": -20,
+            "opacity": 0,
+            "position": "absolute",
+            "width": 40,
+            "zIndex": 3,
+          }
+        }
+      />
+      <div
+        className="range-bullet range-bullet-visible"
+        draggable={true}
+        style={
+          Object {
+            "backgroundColor": "white",
+            "border": "1px solid black",
+            "boxSizing": "border-box",
+            "height": 40,
+            "marginLeft": -20,
+            "position": "absolute",
+            "width": 40,
+            "zIndex": 2,
+          }
+        }
+      />
+      <div
+        className="range-bullet range-bullet-hidden"
+        data-testid="bullet-max"
+        draggable={true}
+        onDragEnter={[Function]}
+        style={
+          Object {
+            "border": "1px solid black",
+            "boxSizing": "border-box",
+            "height": 40,
+            "marginLeft": -20,
+            "opacity": 0,
+            "position": "absolute",
+            "width": 40,
+            "zIndex": 3,
+          }
+        }
+      />
+      <div
+        className="range-bullet range-bullet-visible"
+        draggable={true}
+        style={
+          Object {
+            "backgroundColor": "white",
+            "border": "1px solid black",
+            "boxSizing": "border-box",
+            "height": 40,
+            "marginLeft": -20,
+            "position": "absolute",
+            "width": 40,
+            "zIndex": 2,
+          }
+        }
+      />
+    </div>
+    <input
+      disabled={false}
+      onBlur={[Function]}
+      onChange={[Function]}
+      onFocus={[Function]}
+      placeholder="Max"
+      style={
+        Object {
+          "boxSizing": "border-box",
+          "height": 40,
+          "textAlign": "center",
+          "width": 40,
+        }
+      }
+      type="text"
+      value={1}
+    />
+  </div>
+</div>
+`;

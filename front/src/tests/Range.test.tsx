@@ -1,9 +1,13 @@
-import React, { useState } from "react";
+import React from "react";
 import '@testing-library/jest-dom/extend-expect';
-import { act, render, screen } from "@testing-library/react";
+import { render, screen } from "@testing-library/react";
 import Range from '../components/Range';
 import M from "../constants/messages";
+import Adapter from "enzyme-adapter-react-16";
+import { configure } from "enzyme";
+import renderer from 'react-test-renderer';
 
+configure({ adapter: new Adapter() });
 
 describe('Navigation Renders', () => {
 
@@ -24,26 +28,6 @@ describe('Navigation Renders', () => {
         expect(screen.getByTestId("cents")).toBeInTheDocument();
     });
 
-
-    //!Test inacabado.
-    test("Width update in the event.", () => {
-        render(<Range step={0.01} value={{ max: 30, min: 20 }} />);
-        window.resizeTo = jest.fn();
-        act(() => {
-            window.resizeTo(1024, 500);
-        });
-
-        expect(window.innerWidth).toBe(1024);
-        // expect(screen.getByTestId("cents")).toBeInTheDocument();
-
-        // act(() => {
-        //     window.resizeTo(800, 500);
-        // });
-
-        // expect(window.innerWidth).toBe(800);
-    });
-
-
     test("Range Input throw error by wrong values", () => {
         expect(() => render(<Range
             testid='cents' step={0.01} value={{ max: 20, min: 30 }}
@@ -51,7 +35,13 @@ describe('Navigation Renders', () => {
         expect(() => render(<Range testid='cents' step={0.01} value={[]} />)).toThrow(M.array_length_error);
     });
 
+    test("Las ternarias dentro del useEffect se comprueban Todas.", ()=> {
+        const component = renderer.create(<Range testid='cents' step={0.01} value={{ max: 30, min: 20 }} />);
 
+        let tree = component.toJSON();
+        expect(tree).toMatchSnapshot();
+    
+    });
 
 });
 

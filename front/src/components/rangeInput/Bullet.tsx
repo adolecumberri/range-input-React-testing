@@ -9,7 +9,7 @@ interface IBullet {
 
 const Bullet: FC<IBullet> = ({ size, position, sliderMargin, setSelectedBullet, type }) => {
 
-    const handleDragEnter = (e: any) => {
+    const handleDragEnter = (e: React.DragEvent<HTMLDivElement>) => {
         e.preventDefault();
         e.stopPropagation();
         setSelectedBullet(type);
