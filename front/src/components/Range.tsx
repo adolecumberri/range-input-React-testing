@@ -13,10 +13,11 @@ interface IRangeInput {
   value: RangeValue;
   step?: 0.01 | 0.1 | 1 | 0;
   labelsEnabled?: boolean;
-  range?: {min: number, max: number}
+  range?: {min: number, max: number};
+  testid?: string;
 }
 
-const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0, labelsEnabled = true, range= null }) => {
+const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0, labelsEnabled = true, range= null, testid }) => {
 
   const height = 40;
 
@@ -225,7 +226,7 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0, labelsEna
   }
 
   return (
-    <div style={{ width, margin: height / 4 }}>
+    <div data-testid={`${testid ? testid : "container"}`} style={{ width, margin: height / 4 }}>
       <span>
         width: {sliderWidth}<br />
         X min: {minBulletX}  -  Price Min {minBulletPrice}    <br />

@@ -24,6 +24,7 @@ const Bullet: FC<IBullet> = ({ size, position, sliderMargin, setSelectedBullet, 
 
     return (<>
         <div
+        data-testid={`bullet-${type}`}
             className="range-bullet range-bullet-hidden"
             style={{
                 ...bulletStyle,

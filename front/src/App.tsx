@@ -6,7 +6,7 @@ import {
   Route
 } from "react-router-dom";
 import Navigation from './components/Navigation';
-import RangeInput from './components/RangeInput';
+import Range from './components/Range';
 import { myFetch } from './utils';
 
 
@@ -45,12 +45,12 @@ function App() {
           <Navigation />
           <div style={{ padding: "16px" }}>
             <Routes>
-              <Route path="/Exercice1" element={<><RangeInput value={range} step={0.01} />
-                <RangeInput value={range} step={0.1} />
-                <RangeInput value={range} step={1} />
+              <Route path="/Exercice1" element={<><Range testid='cents' value={range} step={0.01} />
+                <Range testid='tenths' value={{min: 10, max:0}} step={0.1} />
+                <Range testid='euros' value={range} step={1} />
 
               </>} />
-              <Route path="/Exercice2" element={<RangeInput value={valueRange} range={range} labelsEnabled={false} />} />
+              <Route path="/Exercice2" element={<Range value={valueRange} range={range} labelsEnabled={false} />} />
             </ Routes>
           </div>
 
