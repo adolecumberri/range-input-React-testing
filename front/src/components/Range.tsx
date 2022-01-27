@@ -16,9 +16,10 @@ interface IRangeInput {
   labelsEnabled?: boolean;
   range?: {min: number, max: number};
   testid?: string;
+  onChange?: (newValue:  {max: number, min: number } ) => void;
 }
 
-const RangeInput: FC<IRangeInput> = ({ width = "80%", height = 40, value, step = 0, labelsEnabled = true, range= null, testid }) => {
+const RangeInput: FC<IRangeInput> = ({ width = "80%", height = 40, value, step = 0, labelsEnabled = true, range= null, testid, onChange }) => {
 
   // const height = 40;
 
@@ -127,6 +128,13 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", height = 40, value, step =
     setMaxBulletX(maBulletPosition);
 
   }, [sliderWidth]);
+
+  useEffect( () => {
+    onChange && onChange({
+      min: minBulletPrice, 
+      max: maxBulletPrice,
+    });
+  }, [minBulletPrice, maxBulletPrice]);
 
   /**
    * Handle bullet price and position by his pixel position.
