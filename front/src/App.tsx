@@ -17,10 +17,10 @@ function App() {
   });
   const [valueRange, setValueRange] = useState<number[]>([0, 1]);
 
-  const [radio1, setRadio1] = useState< {max: number, min: number } >({min: 0, max: 1});
-  const [radio2, setRadio2] = useState< {max: number, min: number } >({min: 0, max: 1});
-  const [radio3, setRadio3] = useState< {max: number, min: number } >({min: 0, max: 1});
-  const [radio4, setRadio4] = useState< {max: number, min: number } >({min: 0, max: 1});
+  const [radio1, setRadio1] = useState<{ max: number, min: number }>({ min: 0, max: 1 });
+  const [radio2, setRadio2] = useState<{ max: number, min: number }>({ min: 0, max: 1 });
+  const [radio3, setRadio3] = useState<{ max: number, min: number }>({ min: 0, max: 1 });
+  const [radio4, setRadio4] = useState<{ max: number, min: number }>({ min: 0, max: 1 });
   /**
    * Calls the backend.
    */
@@ -52,12 +52,20 @@ function App() {
           <div style={{ padding: "16px" }}>
             <Routes>
               <Route path="/Exercice1" element={<>
-                <Range height={20} testid='cents' value={range} step={0.01} onChange={(newValue) => {setRadio1(newValue)}}/>  {radio1.min} -- {radio1.max}
-                <Range testid='tenths' value={range} step={0.1} onChange={(newValue) => {setRadio2(newValue)}}/>  {radio2.min} -- {radio2.max}
-                <Range testid='euros' height={60} value={range} step={1} onChange={(newValue) => {setRadio3(newValue)}}/>  {radio3.min} -- {radio3.max}
+                <Range height={20} testid='cents' value={range} step={0.01} onChange={(newValue) => { setRadio1(newValue) }} />  {radio1.min} -- {radio1.max}
+                <Range testid='tenths' value={range} step={0.1} onChange={(newValue) => { setRadio2(newValue) }} />  {radio2.min} -- {radio2.max}
+                <Range testid='euros' height={60} value={range} step={1} onChange={(newValue) => { setRadio3(newValue) }} />  {radio3.min} -- {radio3.max}
               </>}
               />
-              <Route path="/Exercice2" element={<Range value={valueRange} range={range} labelsEnabled={false} />} />
+              <Route path="/Exercice2" element={<>
+                <Range value={valueRange} range={range} labelsEnabled={false} onChange={(newValue) => { setRadio4(newValue) }} />
+                {radio4.min} -- {radio4.max} 
+              
+              </>
+              
+              
+              
+              } />
             </ Routes>
           </div>
 
