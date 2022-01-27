@@ -45,9 +45,9 @@ function App() {
           <Navigation />
           <div style={{ padding: "16px" }}>
             <Routes>
-              <Route path="/Exercice1" element={<><Range testid='cents' value={range} step={0.01} />
+              <Route path="/Exercice1" element={<><Range height={20} testid='cents' value={range} step={0.01} />
                 <Range testid='tenths' value={range} step={0.1} />
-                <Range testid='euros' value={range} step={1} />
+                <Range testid='euros' height={80} value={range} step={1} />
 
               </>} />
               <Route path="/Exercice2" element={<Range value={valueRange} range={range} labelsEnabled={false} />} />

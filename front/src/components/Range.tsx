@@ -10,6 +10,7 @@ import "./rangeInput.css"
 
 interface IRangeInput {
   width?: number | string;
+  height?: number;
   value: RangeValue;
   step?: 0.01 | 0.1 | 1 | 0;
   labelsEnabled?: boolean;
@@ -17,9 +18,9 @@ interface IRangeInput {
   testid?: string;
 }
 
-const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0, labelsEnabled = true, range= null, testid }) => {
+const RangeInput: FC<IRangeInput> = ({ width = "80%", height = 40, value, step = 0, labelsEnabled = true, range= null, testid }) => {
 
-  const height = 40;
+  // const height = 40;
 
   const [minBulletX, setMinBulletX] = useState(0);
   const [minBulletPrice, setMinBulletPrice] = useState(0);
@@ -111,7 +112,6 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0, labelsEna
     //calc position using the % where current price is. (if price is the 20% of the value, position will be 20% too.)
     let minPricePercentage = (newMinPricePercentage - sliderValue.min) / (sliderValue.max - sliderValue.min);
     let minBulletPosition = minPricePercentage * sliderWidth;
-    debugger;
     setMinBulletX(minBulletPosition)
 
 
@@ -227,11 +227,11 @@ const RangeInput: FC<IRangeInput> = ({ width = "80%", value, step = 0, labelsEna
 
   return (
     <div data-testid={`${testid ? testid : "container"}`} style={{ width, margin: height / 4 }}>
-      <span>
+      {/* <span>
         width: {sliderWidth}<br />
         X min: {minBulletX}  -  Price Min {minBulletPrice}    <br />
         X max: {maxBulletX}  -  Price Max {maxBulletPrice}
-      </span>
+      </span> */}
       <Slider
         handleDragOver={handleDragOver}
         height={height}

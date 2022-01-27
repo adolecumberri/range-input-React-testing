@@ -59,9 +59,9 @@ const Slider: FC<ISlider> = ({
 
     return (
         <>
-            <div style={{ display: "flex" }}>
+            <div style={{ display: "flex", alignItems: "center" }}>
                 <input style={
-                    { width: 40, height: 40, boxSizing: "border-box", textAlign: "center" }
+                    { width: height, minWidth: 40, minHeight: 40, height, boxSizing: "border-box", textAlign: "center" }
                 }
                     type="text"
                     value={minBulletPrice}
