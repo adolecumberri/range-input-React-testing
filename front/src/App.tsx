@@ -46,7 +46,7 @@ function App() {
           <div style={{ padding: "16px" }}>
             <Routes>
               <Route path="/Exercice1" element={<><Range testid='cents' value={range} step={0.01} />
-                <Range testid='tenths' value={{min: 10, max:0}} step={0.1} />
+                <Range testid='tenths' value={range} step={0.1} />
                 <Range testid='euros' value={range} step={1} />
 
               </>} />
